@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" action="init" caption="Exemption Type" role="MASTER_ENCODER" permission="exemptiontypes.view" index="4" />
+        <invoker type="quick_launcher" code="ET01" action="init" caption="Exemption Type" index="4" role="MASTER_ENCODER" permission="exemptiontypes.view" />
+        
+        <invoker type="formActions" action="create" shortcut="ctrl N" visibleWhen="#{mode == 'view'}" immediate="true" caption="New" mnemonic="n" icon="images/doc-new.png" role="MASTER_ENCODER" permission="exemptiontypes.create" />
+        <invoker type="formActions" action="edit" shortcut="ctrl E" visibleWhen="#{mode == 'view' and entity.objid != null }" immediate="true" caption="Edit" mnemonic="e" icon="images/doc-edit.png" role="MASTER_ENCODER" permission="exemptiontypes.edit" />
+        <invoker type="formActions" action="save" shortcut="ctrl S" visibleWhen="#{mode != 'view'}" caption="Save" mnemonic="s" icon="images/doc-save.png"/>
+        <invoker type="formActions" action="cancel" visibleWhen="#{mode != 'view'}"  immediate="true" caption="Cancel" mnemonic="c" icon="images/doc-cancel.png"/>
+        <invoker type="formActions" action="delete" shortcut="ctrl D" visibleWhen="#{mode == 'view' and entity.objid != null}" immediate="true" caption="Delete" mnemonic="d" icon="images/doc-delete.png" role="MASTER_ENCODER" permission="exemptiontypes.delete"/>
+    </invokers>
+    
+    <code lang="groovy">
+        <![CDATA[
+        
+        import com.rameses.rcp.common.*;
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.osiris2.client.*;
+        import java.rmi.server.UID;
+        
+        public class ExemptionTypesController  extends etracs2.groovy.CRUDController  {
+            @Service("ExemptionTypesService")
+            def svc;
+
+            def getService() { return svc; }
+            def getCreateFocusComponent() { return "entity.exemptcode"; }
+            def getEditFocusComponent() { return "entity.exemptcode"; }
+            def getListHandler() { return listHandler; }
+            
+            
+            def createEntity() {
+                return [
+                    orderno : (list ? list.size() + 1 : 1 )
+                ];
+            }
+            
+            def listHandler = [
+                getRows    : { return 20; },
+                getColumns : {
+                    return [
+                        new Column(name:"exemptcode", caption:"Code", minWidth:40),
+                        new Column(name:"exemptdesc", caption:"Exemption Type", minWidth:170),
+                        new Column(name:"orderno", caption:"Order No.", minWidth:30),
+                    ];
+                },
+                fetchList : { 
+                    return list; 
+                },
+            ] as SubListModel;
+        }
+        
+        
+        ]]>
+    </code>
+    
+    <pages>
+        <page template="etracs2.rpt.master.exemptiontypes.ExemptionTypesPage" />
+    </pages>
+</workunit>
